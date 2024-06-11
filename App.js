@@ -1,10 +1,29 @@
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView, StyleSheet, Text, View, Pressable, TextInput } from 'react-native';
 import ShoppingItem from './src/components/ShoppingItem';
+import { useState, useEffect } from 'react';
+
+import {app, db, getFirestore, collection, addDoc} from './firebase/index'
 
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 
 export default function App() {
+
+  const [title, setTitle] = useState("")
+
+  const addShoppingItem = async () => {
+    try {
+      const docRef = await addDoc(collection(db, "shopping"), {
+        title: title,
+        isChecked: false,
+      });
+      console.log("Document written with ID: ", docRef.id);
+      setTitle("")
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -27,7 +46,13 @@ export default function App() {
       <ShoppingItem />
 
       {/* text input */}
-      <TextInput placeholder='Enter shopping item' style={styles.input} />
+      <TextInput
+        placeholder='Enter shopping item'
+        style={styles.input}
+        value={title}
+        onChangeText={(text) => setTitle(text)}
+        onSubmitEditing={addShoppingItem}
+      />
     </SafeAreaView>
   );
 }

@@ -4,6 +4,12 @@ import React from 'react'
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 
 // shopping object
+/*
+  1. id
+  2. title
+  3. isChecked
+
+*/
 
 const ShoppingItem = () => {
   return (
