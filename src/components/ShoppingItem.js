@@ -3,6 +3,8 @@ import React from 'react'
 
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 
+// shopping object
+
 const ShoppingItem = () => {
   return (
     <View style={styles.container}>
