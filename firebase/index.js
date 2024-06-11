@@ -1,12 +1,14 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
+import { API_KEY } from '@env';
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDFXgsTD-vbZF4ybAb-h-lXB9bIGGz14vY",
+  apiKey: API_KEY,
   authDomain: "shopping-list-a0a96.firebaseapp.com",
   projectId: "shopping-list-a0a96",
   storageBucket: "shopping-list-a0a96.appspot.com",
@@ -18,4 +20,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export {app, db, getFirestore, collection, addDoc}
+export {app, db, getFirestore, collection, addDoc, getDocs}

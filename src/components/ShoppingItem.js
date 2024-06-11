@@ -11,7 +11,7 @@ import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 
 */
 
-const ShoppingItem = () => {
+const ShoppingItem = (props) => {
   return (
     <View style={styles.container}>
       {/* checked icon */}
@@ -20,7 +20,7 @@ const ShoppingItem = () => {
       </Pressable>
 
       {/* shopping text */}
-      <Text style={styles.title}>Bread</Text>
+      <Text style={styles.title}>{props.title}</Text>
 
       {/* delete button */}
       <Pressable>

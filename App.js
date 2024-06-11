@@ -1,15 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Text, View, Pressable, TextInput } from 'react-native';
-import ShoppingItem from './src/components/ShoppingItem';
+import { SafeAreaView, StyleSheet, Text, View, Pressable, TextInput, FlatList, ActivityIndicator } from 'react-native';
 import { useState, useEffect } from 'react';
 
-import {app, db, getFirestore, collection, addDoc} from './firebase/index'
+// DB
+import {app, db, getFirestore, collection, addDoc, getDocs} from './firebase/index'
 
+// Icons
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
+
+// Components
+import ShoppingItem from './src/components/ShoppingItem';
 
 export default function App() {
 
   const [title, setTitle] = useState("")
+  const [shoppingList, setShoppingList] = useState([])
 
   const addShoppingItem = async () => {
     try {
@@ -22,7 +27,35 @@ export default function App() {
     } catch (e) {
       console.error("Error adding document: ", e);
     }
+    getShoppingList()
   }
+
+  // const getShoppingList = async () => {
+  //   const querySnapshot = await getDocs(collection(db, "shopping"));
+  //   querySnapshot.forEach((doc) => {
+  //     console.log(doc.id, doc.data());
+  //     setShoppingList({
+  //       ...doc.data(),
+  //       id: doc.id
+  //     })
+  //   });
+  // }
+
+  
+  const getShoppingList = async () => {
+    setShoppingList([]);
+    const myShopping = [];
+    const querySnapshot = await getDocs(collection(db, "shopping"));
+    querySnapshot.forEach((doc) => {
+      console.log(doc.id, doc.data());
+      myShopping.push({ key: doc.id, title: doc.data().title });
+    });
+    setShoppingList(myShopping);
+  };
+
+  useEffect(() => {
+    getShoppingList()
+  }, [])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -31,7 +64,7 @@ export default function App() {
         <Text style={styles.heading}>Shopping List</Text>
 
         {/* number of shopping items */}
-        <Text style={styles.numOfItems}>5</Text>
+        <Text style={styles.numOfItems}>{shoppingList.length}</Text>
 
         {/* delete all */}
         <Pressable>
@@ -39,20 +72,30 @@ export default function App() {
         </Pressable>
 
       </View>
-      <ShoppingItem />
-      <ShoppingItem />
-      <ShoppingItem />
-      <ShoppingItem />
-      <ShoppingItem />
+      
+      {/* flatlist */}
+      {shoppingList.length > 0 ? (
+        <FlatList
+          data={shoppingList}
+          renderItem={({item}) => <ShoppingItem title={item.title} />}
+          keyExtractor={item => item.id}
+        />
+      ) : (
+        <ActivityIndicator />
+        // <Text>Não tem nada</Text>
+      )}
+      
 
-      {/* text input */}
-      <TextInput
-        placeholder='Enter shopping item'
-        style={styles.input}
-        value={title}
-        onChangeText={(text) => setTitle(text)}
-        onSubmitEditing={addShoppingItem}
-      />
+      <View style={styles.inputContainer}>
+        {/* text input */}
+        <TextInput
+          placeholder='Enter shopping item'
+          style={styles.input}
+          value={title}
+          onChangeText={(text) => setTitle(text)}
+          onSubmitEditing={addShoppingItem}
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -92,5 +135,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: 10,
     marginTop: 'auto',
+  },
+  inputContainer: {
+    paddingTop: 20,
+    paddingBottom: 20
   }
 });
