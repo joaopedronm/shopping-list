@@ -1,7 +1,9 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome5, MaterialIcons, AntDesign } from '@expo/vector-icons';
+
+import {db, doc, updateDoc} from '../../firebase/index'
 
 // shopping object
 /*
@@ -12,11 +14,32 @@ import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 */
 
 const ShoppingItem = (props) => {
+
+  const [isChecked, setIsChecked] = useState(props.isChecked)
+
+  const updateIsChecked = async () => {
+    const shoppingRef = doc(db, "shopping", props.id);
+  
+    // Set the "capital" field of the city 'DC'
+    await updateDoc(shoppingRef, {
+      isChecked: isChecked,
+    });
+  }
+
+  
+  useEffect(() => {
+    updateIsChecked()
+  }, [isChecked])
+
   return (
     <View style={styles.container}>
       {/* checked icon */}
-      <Pressable>
-        <FontAwesome5 name="check-circle" size={24} color="black" />
+      <Pressable onPress={() => setIsChecked(!isChecked)}>
+        {isChecked ? (
+          <AntDesign name="checkcircle" size={24} color="black" />
+        ) : (
+          <FontAwesome5 name="check-circle" size={24} color="black" />
+        )}
       </Pressable>
 
       {/* shopping text */}

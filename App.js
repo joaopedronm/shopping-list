@@ -41,17 +41,15 @@ export default function App() {
   //   });
   // }
 
-  
   const getShoppingList = async () => {
-    setShoppingList([]);
-    const myShopping = [];
     const querySnapshot = await getDocs(collection(db, "shopping"));
-    querySnapshot.forEach((doc) => {
-      console.log(doc.id, doc.data());
-      myShopping.push({ key: doc.id, title: doc.data().title });
-    });
-    setShoppingList(myShopping);
-  };
+    
+    setShoppingList(
+      querySnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}))
+    )
+
+    console.log(shoppingList)
+  }
 
   useEffect(() => {
     getShoppingList()
@@ -77,8 +75,8 @@ export default function App() {
       {shoppingList.length > 0 ? (
         <FlatList
           data={shoppingList}
-          renderItem={({item}) => <ShoppingItem title={item.title} />}
-          keyExtractor={item => item.id}
+          renderItem={({item}) => <ShoppingItem title={item.title} isChecked={item.isChecked} id={item.id} />}
+          keyExtractor={(item) => item.id}
         />
       ) : (
         <ActivityIndicator />
