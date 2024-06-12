@@ -75,7 +75,7 @@ export default function App() {
       {shoppingList.length > 0 ? (
         <FlatList
           data={shoppingList}
-          renderItem={({item}) => <ShoppingItem title={item.title} isChecked={item.isChecked} id={item.id} />}
+          renderItem={({item}) => (<ShoppingItem title={item.title} isChecked={item.isChecked} id={item.id} getShoppingList={getShoppingList} />)}
           keyExtractor={(item) => item.id}
         />
       ) : (
@@ -102,12 +102,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   header: {
     flexDirection: 'row',
-    // backgroundColor: 'red',
     width: '90%',
     alignSelf: 'center',
     padding: 10,

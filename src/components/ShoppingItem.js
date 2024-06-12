@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 
 import { FontAwesome5, MaterialIcons, AntDesign } from '@expo/vector-icons';
 
-import {db, doc, updateDoc} from '../../firebase/index'
+import {db, doc, updateDoc, deleteDoc} from '../../firebase/index'
 
 // shopping object
 /*
@@ -26,10 +26,15 @@ const ShoppingItem = (props) => {
     });
   }
 
-  
+  const deleteShoppingItem = async () => {
+    await deleteDoc(doc(db, "shopping", props.id));
+    props.getShoppingList()
+  }
+
   useEffect(() => {
     updateIsChecked()
   }, [isChecked])
+
 
   return (
     <View style={styles.container}>
@@ -46,7 +51,7 @@ const ShoppingItem = (props) => {
       <Text style={styles.title}>{props.title}</Text>
 
       {/* delete button */}
-      <Pressable>
+      <Pressable onPress={deleteShoppingItem}>
         <MaterialIcons name="delete-outline" size={24} color="black" />
       </Pressable>
     </View>
