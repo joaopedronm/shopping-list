@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Text, View, Pressable, TextInput, FlatList, ActivityIndicator } from 'react-native';
+import { KeyboardAvoidingView, Platform, Keyboard, SafeAreaView, StyleSheet, Text, View, Pressable, TextInput, FlatList, ActivityIndicator, TouchableWithoutFeedback } from 'react-native';
 import { useState, useEffect } from 'react';
 
 // DB
-import {app, db, getFirestore, collection, addDoc, getDocs} from './firebase/index'
+import {app, db, getFirestore, collection, addDoc, getDocs, doc, deleteDoc} from './firebase/index'
 
 // Icons
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
@@ -51,6 +51,13 @@ export default function App() {
     console.log(shoppingList)
   }
 
+  const deleteShoppingList = async () => {
+    const querySnapshot = await getDocs(collection(db, "shopping"));
+    
+    querySnapshot.docs.map((item) => deleteDoc(doc(db, "shopping", item.id)))
+    getShoppingList()
+  }
+
   useEffect(() => {
     getShoppingList()
   }, [])
@@ -65,7 +72,7 @@ export default function App() {
         <Text style={styles.numOfItems}>{shoppingList.length}</Text>
 
         {/* delete all */}
-        <Pressable>
+        <Pressable onPress={deleteShoppingList}>
           <MaterialIcons name="delete-outline" size={24} color="black" />
         </Pressable>
 
@@ -84,16 +91,20 @@ export default function App() {
       )}
       
 
-      <View style={styles.inputContainer}>
-        {/* text input */}
-        <TextInput
-          placeholder='Enter shopping item'
-          style={styles.input}
-          value={title}
-          onChangeText={(text) => setTitle(text)}
-          onSubmitEditing={addShoppingItem}
-        />
-      </View>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>  
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.inputContainer}>
+            {/* text input */}
+            <TextInput
+              placeholder='Enter shopping item'
+              style={styles.input}
+              value={title}
+              onChangeText={(text) => setTitle(text)}
+              onSubmitEditing={addShoppingItem}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -102,6 +113,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    marginTop: 32
   },
   header: {
     flexDirection: 'row',
